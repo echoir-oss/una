@@ -2,7 +2,7 @@
 	"name": "una",
 	"version": "0.1.0-1",
 	"main": "src/index.js",
-	"license": "SEE LICENSE IN LICENCE.md",
+	"license": "SEE LICENSE IN COPYING",
 	"dependencies": {
 		"bcrypt": "^5.1.1",
 		"body-parser": "^1.20.3",
