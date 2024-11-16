@@ -1,0 +1,22 @@
+accountFile - File for basic info about accounts, stored in data/accounts
+
+DESCRIPTION
+The data/accounts file contains one line for each user account.
+There are five fields delimited by colons (":"). These fields are:
+
+	Mail address
+		This must be a valid e-mail address which is reachable over the network it's placed in, usually the internet.
+
+	Account ID
+		This must be an unique user ID which is used to uniquely identify each user in the program.
+
+	Password hash
+		This must be a password hashed in bcrypt, which (ideally) should be unique per user.
+		On a side note (although it should be obvious), THE PASSWORD SHOULD BE STRONG, ESPECIALLY FOR ADMINISTRATIVE ACCOUNTS!!!!
+
+	isActive
+		A boolean for if the account is active or not. If the entry is not active, the log-in shall be rejected.
+
+	isAdmin
+		A boolean for if the account has administrative permissions or not. If the entry is not `true`, administrative functions shall be rejected.
+
