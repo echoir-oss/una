@@ -1,0 +1,13 @@
+mainLoop - Main event loop for Una
+
+PREFACE
+	FIXME: This documentation file is a stub!!
+
+	This is fine as the feature described in this file isn't finished yet,
+	however at some time it will be available and then it should be the
+	prime time to update this document to contain the necessary information
+	about this feature.
+
+DESCRIPTION
+	The main loop is available in the globalThis, which consequently makes it available over global too.
+	It contains gateway events, like messageCreate, messageEdit, userStatus etc.
