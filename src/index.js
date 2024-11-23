@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const events = require('node:events');
 
 const express = require('express');
 const mt = require('microtime');
@@ -8,6 +9,11 @@ const cp = require('cookie-parser');
 const ws = require('express-ws');
 
 const accounts = require('../lib/acc.js');
+globalThis.mainLoop = new events();
+
+globalThis.mainLoop.on('message', async (message) => {
+	console.log(message);
+});
 
 const app = express();
 
