@@ -12,6 +12,8 @@ module.exports = {
 
 		temp = await acc.verifyPass(req.body.mail, req.body.pass);
 		if (!temp) {
+			res.status(401);
+
 			return res.end(JSON.stringify({
 				success: 0
 			}));
