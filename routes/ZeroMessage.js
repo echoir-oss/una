@@ -60,6 +60,7 @@ module.exports = {
 		}
 
 		let bodyNaturalised = naturaliseBody(req.body);
+		bodyNaturalised.authorId = temp;
 
 		globalThis.mainLoop.emit('message', bodyNaturalised);
 
