@@ -62,7 +62,7 @@ module.exports = {
 		let bodyNaturalised = naturaliseBody(req.body);
 		bodyNaturalised.authorId = temp;
 
-		globalThis.mainLoop.emit('message', bodyNaturalised);
+		globalThis.mainLoop.emit('messageCreate', bodyNaturalised);
 
 		return res.end(JSON.stringify({
 			success: 1,

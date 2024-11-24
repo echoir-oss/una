@@ -11,7 +11,7 @@ const ws = require('express-ws');
 const accounts = require('../lib/acc.js');
 globalThis.mainLoop = new events();
 
-globalThis.mainLoop.on('message', async (message) => {
+globalThis.mainLoop.on('messageCreate', async (message) => {
 	console.log(message);
 });
 
