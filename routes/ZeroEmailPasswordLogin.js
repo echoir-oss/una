@@ -10,8 +10,8 @@ module.exports = {
 		res.setHeader('Content-Type', 'text/json');
 		res.status(200);
 
-		temp = await acc.verifyPass(req.body.mail, req.body.pass);
-		if (!temp) {
+		const id = await acc.verifyPass(req.body.mail, req.body.pass);
+		if (id === false) {
 			res.status(401);
 
 			return res.end(JSON.stringify({
@@ -19,7 +19,9 @@ module.exports = {
 			}));
 		}
 
-		temp = await acc.createToken(req.body.mail);
+		console.log(`id: ${id}`);
+
+		temp = await acc.createToken(id);
 
 		res.write(JSON.stringify({
 			success: 1,
