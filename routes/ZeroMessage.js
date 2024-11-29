@@ -37,36 +37,35 @@ module.exports = {
 	method: 'post',
 	path: '/api/v0/message',
 	async execute(req, res) {
-		let temp = false;
-
-		res.setHeader('Content-Type', 'text/json');
-		res.status(200);
-
-		temp = await acc.verifyToken(req.headers['authorisation']);
-		if (temp === false) {
+		const authStatus = await acc.verifyToken(req.headers['authorisation']);
+		if (authStatus === false) {
 			res.status(401);
 
-			return res.end(JSON.stringify({
+			res.json({
 				success: 0
-			}));
+			});
+			return 0;
 		}
 
 		if (!validateBody(req.body)) {
 			res.status(400);
 
-			return res.end(JSON.stringify({
+			res.json({
 				success: 0
-			}));
+			});
+			return 0;
 		}
 
-		let bodyNaturalised = naturaliseBody(req.body);
-		bodyNaturalised.authorId = temp;
+		const bodyNaturalised = naturaliseBody(req.body);
+		bodyNaturalised.authorId = authStatus;
 
 		globalThis.mainLoop.emit('messageCreate', bodyNaturalised);
 
-		return res.end(JSON.stringify({
+		res.json({
 			success: 1,
 			messageId: bodyNaturalised.messageId
-		}));
+		});
+
+		return 0;
 	}
 }
