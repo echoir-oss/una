@@ -4,7 +4,7 @@ const acc = require('../lib/acc.js');
 function naturaliseBody(body) {
 	const out = {
 		content: body.content,
-		messageId: Math.floor(Math.random() * 1e8).toString(),
+		messageId: globalThis.snowflakeGen.getUniqueID().toString(),
 		channelId: body.channelId,
 		guildId: body.guildId
 	}

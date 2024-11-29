@@ -3,9 +3,16 @@ const path = require('node:path');
 const events = require('node:events');
 
 const express = require('express');
+const sf = require('nodejs-snowflake');
 const mt = require('microtime');
 const cp = require('cookie-parser');
 const ws = require('express-ws');
+
+globalThis.snowflakeGen = new sf.Snowflake({
+	custom_epoch: 1732860176031,
+	instance_id: 0
+});
+console.log(snowflakeGen.getUniqueID());
 
 const accounts = require('../lib/acc.js');
 globalThis.mainLoop = new events();
