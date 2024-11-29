@@ -4,7 +4,6 @@ const events = require('node:events');
 
 const express = require('express');
 const mt = require('microtime');
-const mp = require('mutex-promise');
 const cp = require('cookie-parser');
 const ws = require('express-ws');
 
@@ -16,8 +15,6 @@ globalThis.mainLoop.on('messageCreate', async (message) => {
 });
 
 const app = express();
-
-accounts.loadAccounts();
 
 ws(app);
 app.use(cp());
