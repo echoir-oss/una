@@ -1,8 +1,8 @@
 {
 	"name": "una",
-	"version": "0.1.0-1",
+	"version": "0.1.0-2",
 	"main": "index.js",
-	"license": "CECILL-2.1",
+	"license": "Apache-2.0",
 	"dependencies": {
 		"bcrypt": "^5.1.1",
 		"burgerdatabase": "^0.1.3",
