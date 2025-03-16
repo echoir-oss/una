@@ -242,6 +242,10 @@ app.ws("/api/v0/ws", async (ws, req) => {
 		payload: { acceptedTimestamp: Date.now(), accepted: true }
 	}));
 
+	ws.send(JSON.stringify({
+		type: "ready"
+	}));
+
 	ws.on('close', async () => {
 		mainLoop.removeListener('post', mainLoopPost);
 	});
