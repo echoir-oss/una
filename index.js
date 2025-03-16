@@ -23,8 +23,8 @@ const app = express();
 app.use(express.json());
 expressWs(app);
 
-function findIdByUsername(username) {
-	for (const [key, entry] of Object.entries(dbPass.data)) {
+async function findIdByUsername(username) {
+	for (const [key, entry] of Object.entries((await dbPass.all()))) {
 		if (!key.startsWith("user_")) continue;
 		const id = key.split("").slice(5).join("");
 
@@ -38,8 +38,8 @@ function findIdByUsername(username) {
 	return null;
 }
 
-function findIdByEmail(email) {
-	for (const [key, entry] of Object.entries(dbPass.data)) {
+async function findIdByEmail(email) {
+	for (const [key, entry] of Object.entries((await dbPass.all()))) {
 		if (!key.startsWith("user_")) continue;
 		const id = key.split("").slice(5).join('');
 
@@ -51,31 +51,31 @@ function findIdByEmail(email) {
 	return null;
 }
 
-function createToken(id) {
+async function createToken(id) {
 	const token = require('crypto').randomBytes(32).toString('hex');
 
-	dbTokens.set(token, `${id}`);
+	await dbTokens.set(token, `${id}`);
 
 	return token;
 }
 
-function verifyToken(token) {
-	const id = dbTokens.get(token);
+async function verifyToken(token) {
+	const id = await dbTokens.get(token);
 
 	if (id === undefined) return null;
 
 	return id;
 }
 
-function getUserData(id) {
-	const userData = dbPass.get(`user_${id}`);
+async function getUserData(id) {
+	const userData = await dbPass.get(`user_${id}`);
 
 	if (userData === undefined) return null;
 
 	return userData;
 }
 
-function isUserAllowedToParticipateInChannel(id, channelId) {
+async function isUserAllowedToParticipateInChannel(id, channelId) {
 	if (channelId !== "0") {
 		return false;
 	}
@@ -84,7 +84,7 @@ function isUserAllowedToParticipateInChannel(id, channelId) {
 }
 
 async function verifyPassword(id, password) {
-	const userData = dbPass.get(`user_${id}`);
+	const userData = await dbPass.get(`user_${id}`);
 
 	if (typeof userData?.passhash !== 'string') return false;
 
@@ -108,7 +108,7 @@ async function createUser(email, username, password) {
 		passhash
 	}
 
-	dbPass.set(`user_${id}`, userData);
+	await dbPass.set(`user_${id}`, userData);
 
 	return id;
 }
@@ -126,7 +126,7 @@ app.post("/api/v0/login/email", async (req, res, next) => {
 		return;
 	}
 
-	const id = findIdByEmail(req.body.email);
+	const id = await findIdByEmail(req.body.email);
 	if (id === null) {
 		res.status(403);
 		res.json({});
@@ -134,14 +134,14 @@ app.post("/api/v0/login/email", async (req, res, next) => {
 		return;
 	}
 
-	if (!verifyPassword(id, req.body.password)) {
+	if (!(await verifyPassword(id, req.body.password))) {
 		res.status(403);
 		res.json({});
 
 		return;
 	}
 
-	const token = createToken(id);
+	const token = await createToken(id);
 
 	res.status(200);
 	res.json({
@@ -160,14 +160,14 @@ app.post("/api/v0/signup/email", async (req, res, next) => {
 		return;
 	}
 
-	if (findIdByEmail(req.body.email) !== null) {
+	if ((await findIdByEmail(req.body.email)) !== null) {
 		res.status(403);
 		res.json({ extra: "E-mail address already in use!" });
 		
 		return;
 	}
 
-	if (findIdByUsername(req.body.username) !== null) {
+	if ((await findIdByUsername(req.body.username)) !== null) {
 		res.status(403);
 		res.json({ extra: "Username already in use!" });
 
@@ -185,14 +185,14 @@ app.post("/api/v0/signup/email", async (req, res, next) => {
 });
 
 app.post("/api/v0/post", async (req, res, next) => {
-	const userId = verifyToken(req.headers['authorization']);
+	const userId = await verifyToken(req.headers['authorization']);
 	if (userId === null) {
 		res.status(403);
 		res.json({ extra: "Unauthorised" });
 		return;
 	}
 
-	const userData = getUserData(userId);
+	const userData = await getUserData(userId);
 
 	if (typeof req.body.content !== 'string' || typeof req.body.channelId !== 'string') {
 		res.status(400);
@@ -201,7 +201,7 @@ app.post("/api/v0/post", async (req, res, next) => {
 		return;
 	}
 
-	if (!isUserAllowedToParticipateInChannel(userId, req.body.channelId)) {
+	if (!(await isUserAllowedToParticipateInChannel(userId, req.body.channelId))) {
 		res.status(403);
 		res.json({ extra: "User is not allowed to participate in channel" });
 
@@ -219,7 +219,7 @@ app.post("/api/v0/post", async (req, res, next) => {
 });
 
 app.ws("/api/v0/ws", async (ws, req) => {
-	const id = verifyToken(req.headers['sec-websocket-protocol']);
+	const id = await verifyToken(req.headers['sec-websocket-protocol']);
 	if (id === null) {
 		ws.close();
 
