@@ -113,10 +113,6 @@ async function createUser(email, username, password) {
 	return id;
 }
 
-mainLoop.on('post', async (post) => {
-	console.log(post);
-});
-
 app.get("/api/v0/ping", async (req, res, next) => {
 	res.end(`${JSON.stringify({ date: Date.now() })}\n`);
 	return;
@@ -180,8 +176,6 @@ app.post("/api/v0/signup/email", async (req, res, next) => {
 
 	const id = await createUser(req.body.email, req.body.username, req.body.password);
 
-	console.log(id);
-
 	res.status(200);
 	res.json({
 		id: id.toString()
@@ -226,7 +220,6 @@ app.post("/api/v0/post", async (req, res, next) => {
 
 app.ws("/api/v0/ws", async (ws, req) => {
 	const id = verifyToken(req.headers['sec-websocket-protocol']);
-	console.log(id);
 	if (id === null) {
 		ws.close();
 
@@ -250,7 +243,6 @@ app.ws("/api/v0/ws", async (ws, req) => {
 	}));
 
 	ws.on('close', async () => {
-		console.log('close');
 		mainLoop.removeListener('post', mainLoopPost);
 	});
 });
