@@ -221,6 +221,13 @@ app.post("/api/v0/post", async (req, res, next) => {
 app.ws("/api/v0/ws", async (ws, req) => {
 	const id = await verifyToken(req.headers['sec-websocket-protocol']);
 	if (id === null) {
+		ws.send(JSON.stringify({
+			type: "status",
+			payload: {
+				acceptedTimestamp: 0,
+				accepted: false
+			}
+		}));
 		ws.close();
 
 		return;
