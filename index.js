@@ -15,10 +15,10 @@ globalThis.snowflakeGen = new Snowflake({
 	instance_id: 0
 });
 
-globalThis.dbMessages = new burgerdatabase({ path: "./messages.json", noGzip: true });
-globalThis.dbChannels = new burgerdatabase({ path: "./channels.json", noGzip: true });
-globalThis.dbTokens = new burgerdatabase({ path: "./tokens.json", noGzip: true });
-globalThis.dbPass = new burgerdatabase({ path: "./auth.json", noGzip: true });
+globalThis.dbMessages = new burgerdatabase({ path: "./datastore/messages.json", noGzip: true });
+globalThis.dbChannels = new burgerdatabase({ path: "./datastore/channels.json", noGzip: true });
+globalThis.dbTokens = new burgerdatabase({ path: "./datastore/tokens.json", noGzip: true });
+globalThis.dbPass = new burgerdatabase({ path: "./datastore/auth.json", noGzip: true });
 
 const app = express();
 app.use(express.json());
