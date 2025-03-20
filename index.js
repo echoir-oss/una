@@ -25,7 +25,7 @@ app.use(express.json());
 expressWs(app);
 
 globalThis.loadApis = async () => {
-	const apisDir = fs.readdirSync('./apis').filter((fileName) => fileName.endsWith('.js'));
+	const apisDir = fs.readdirSync('./apis');
 
 	for (let i = 0; i < apisDir.length; i++) {
 		const apisModulePath = path.join(__dirname, "./apis", apisDir[i]);
