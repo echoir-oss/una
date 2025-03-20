@@ -75,6 +75,22 @@ async function getUserData(id) {
 	return userData;
 }
 
+async function isUserInGuild(userId, guildId) {
+	if (guildId === "2") {
+		return true;
+	}
+
+	return false;
+}
+
+async function isUserInChannel(userId, channelId) {
+	if (channelId === "5") {
+		return true;
+	}
+
+	return false;
+}
+
 async function isUserAllowedToParticipateInChannel(id, channelId) {
 	if (channelId !== "0") {
 		return false;
