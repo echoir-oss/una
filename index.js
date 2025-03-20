@@ -114,14 +114,22 @@ async function createUser(email, username, password) {
 }
 
 app.get("/api/v0/ping", async (req, res, next) => {
-	res.end(`${JSON.stringify({ date: Date.now() })}\n`);
+	res.json({
+		success: true,
+		code: 0,
+		date: Date.now()
+	});
+
 	return;
 });
 
 app.post("/api/v0/login/email", async (req, res, next) => {
 	if (typeof req.body?.email !== "string" || typeof req.body?.password !== "string") {
 		res.status(400);
-		res.json({});
+		res.json({
+			success: false,
+			code: -1
+		});
 
 		return;
 	}
@@ -129,14 +137,20 @@ app.post("/api/v0/login/email", async (req, res, next) => {
 	const id = await findIdByEmail(req.body.email);
 	if (id === null) {
 		res.status(403);
-		res.json({});
+		res.json({
+			success: false,
+			code: -2
+		});
 
 		return;
 	}
 
 	if (!(await verifyPassword(id, req.body.password))) {
 		res.status(403);
-		res.json({});
+		res.json({
+			success: false,
+			code: -3
+		});
 
 		return;
 	}
@@ -145,31 +159,44 @@ app.post("/api/v0/login/email", async (req, res, next) => {
 
 	res.status(200);
 	res.json({
-		id: id.toString(),
-		token
+		success: true,
+		code: 0,
+		payload: {
+			id: id.toString(),
+			token
+		}
 	});
 
 	return;
 });
 
-app.post("/api/v0/signup/email", async (req, res, next) => {
+app.post("/api/v0/register/email", async (req, res, next) => {
 	if (typeof req.body?.email !== "string" || typeof req.body?.password !== "string" || typeof req.body?.username !== "string") {
 		res.status(400);
-		res.json({});
+		res.json({
+			success: false,
+			code: -1
+		});
 
 		return;
 	}
 
 	if ((await findIdByEmail(req.body.email)) !== null) {
 		res.status(403);
-		res.json({ extra: "E-mail address already in use!" });
+		res.json({
+			success: false,
+			code: -2
+		});
 		
 		return;
 	}
 
 	if ((await findIdByUsername(req.body.username)) !== null) {
 		res.status(403);
-		res.json({ extra: "Username already in use!" });
+		res.json({
+			success: false,
+			code: -3
+		});
 
 		return;
 	}
@@ -178,53 +205,73 @@ app.post("/api/v0/signup/email", async (req, res, next) => {
 
 	res.status(200);
 	res.json({
-		id: id.toString()
+		success: true,
+		code: 0,
+		payload: {
+			id: id.toString()
+		}
 	});
 
 	return;
 });
 
-app.post("/api/v0/post", async (req, res, next) => {
+app.post("/api/v0/message", async (req, res, next) => {
 	const userId = await verifyToken(req.headers['authorization']);
 	if (userId === null) {
 		res.status(403);
-		res.json({ extra: "Unauthorised" });
+		res.json({ success: false, code: -1 });
 		return;
 	}
 
 	const userData = await getUserData(userId);
 
-	if (typeof req.body.content !== 'string' || typeof req.body.channelId !== 'string') {
+	if (typeof req.body.content !== 'string' || typeof req.body.cid !== 'string') {
 		res.status(400);
-		res.json({ extra: "Invalid content" });
+		res.json({ success: false, code: -2 });
 
 		return;
 	}
 
-	if (!(await isUserAllowedToParticipateInChannel(userId, req.body.channelId))) {
+	if (!(await isUserInGuild(userId, req.body.gid))) {
 		res.status(403);
-		res.json({ extra: "User is not allowed to participate in channel" });
+		res.json({ success: false, code: -3 });
+	}
+
+	if (!(await isUserAllowedToParticipateInChannel(userId, req.body.cid))) {
+		res.status(403);
+		res.json({ success: false, code: -4 });
 
 		return;
 	}
 
-	const messageId = snowflakeGen.getUniqueID();
+	const messageId = snowflakeGen.getUniqueID().toString();
 
-	mainLoop.emit('post', { messageId: messageId.toString(), userId: userId.toString(), username: userData.username, content: req.body.content });
+	mainLoop.emit('post', {
+		from: {
+			mid: messageId,
+			uid: userId,
+			gid: req.body.gid,
+			cid: req.body.cid
+		},
+		text: req.body.content
+	});
+
+	res.status(200);
 	res.json({
-		messageId: messageId.toString(),
-		channelId: req.body.channelId,
-		content: req.body.content
+		success: true,
+		code: 0,
+		payload: {
+			mid: messageId
+		}
 	});
 });
 
-app.ws("/api/v0/ws", async (ws, req) => {
+app.ws("/api/v0/live", async (ws, req) => {
 	const id = await verifyToken(req.headers['sec-websocket-protocol']);
 	if (id === null) {
 		ws.send(JSON.stringify({
-			type: "status",
+			type: "authentication",
 			payload: {
-				acceptedTimestamp: 0,
 				accepted: false
 			}
 		}));
@@ -235,7 +282,7 @@ app.ws("/api/v0/ws", async (ws, req) => {
 
 	function mainLoopPost(payload) {
 		ws.send(JSON.stringify({
-			type: "post",
+			type: "messagePost",
 			payload: payload
 		}));
 
@@ -245,12 +292,23 @@ app.ws("/api/v0/ws", async (ws, req) => {
 	ws.listenerThingie = mainLoop.on('post', mainLoopPost);
 
 	ws.send(JSON.stringify({
-		type: "status",
-		payload: { acceptedTimestamp: Date.now(), accepted: true }
+		type: "authentication",
+		payload: {
+			accepted: true
+		}
 	}));
 
 	ws.send(JSON.stringify({
-		type: "ready"
+		type: "earlyInfo",
+		payload: {
+			gidList: ["1"],
+			uid: id
+		}
+	}));
+
+	ws.send(JSON.stringify({
+		type: "ready",
+		payload: {}
 	}));
 
 	ws.on('close', async () => {
