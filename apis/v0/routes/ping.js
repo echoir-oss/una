@@ -5,7 +5,9 @@ module.exports = {
 		res.json({
 			success: true,
 			code: 0,
-			date: Date.now()
+			payload: {
+				date: Date.now()
+			}
 		});
 		return;
 	}
