@@ -104,6 +104,7 @@ async function createUser(email, username, password) {
 	const id = snowflakeGen.getUniqueID();
 
 	const userData = {
+		version: "0",
 		email,
 		username,
 		passhash
