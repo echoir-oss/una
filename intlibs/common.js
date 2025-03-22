@@ -139,6 +139,21 @@ async function createDMGroup(name, ownerId, memberIds) {
 	return cid.toString();
 }
 
+async function createChannel(name, guildId) {
+	const cid = snowflakeGen.getUniqueID();
+
+	const channelData = {
+		version: "0",
+		name,
+		type: "channel",
+		guildId
+	}
+
+	await dbChannels.set(`${cid}`, JSON.stringify(channelData));
+
+	return cid.toString();
+}
+
 module.exports = {
 	findIdByUsername,
 	findIdByEmail,
@@ -150,5 +165,6 @@ module.exports = {
 	isUserAllowedToParticipateInChannel,
 	verifyPassword,
 	createDMGroup,
+	createChannel,
 	createUser
 }
