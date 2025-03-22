@@ -149,5 +149,6 @@ module.exports = {
 	isUserInGuild,
 	isUserAllowedToParticipateInChannel,
 	verifyPassword,
+	createDMGroup,
 	createUser
 }
