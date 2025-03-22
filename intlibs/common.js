@@ -161,7 +161,6 @@ async function createGuild(name, ownerId) {
 		version: "0",
 		name,
 		type: "guild",
-		gid,
 		memberIds: [ownerId],
 		channelIds: []
 	}
