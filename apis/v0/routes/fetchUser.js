@@ -22,7 +22,7 @@ module.exports = {
 			success: true,
 			code: 0,
 			payload: {
-				date: Date.now()
+				username: userData
 			}
 		});
 
