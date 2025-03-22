@@ -162,7 +162,8 @@ async function createGuild(name, ownerId) {
 		name,
 		type: "guild",
 		gid,
-		memberIds: [ownerId]
+		memberIds: [ownerId],
+		channelIds: []
 	}
 
 	await dbGuilds.set(`${gid}`, JSON.stringify(guildData));
