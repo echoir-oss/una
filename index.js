@@ -17,7 +17,9 @@ globalThis.snowflakeGen = new Snowflake({
 
 globalThis.dbMessages = new burgerdatabase({ path: "./datastore/messages.json", noGzip: true });
 globalThis.dbChannels = new burgerdatabase({ path: "./datastore/channels.json", noGzip: true });
+globalThis.dbGuilds = new burgerdatabase({ path: "./datastore/guilds.json", noGzip: true });
 globalThis.dbTokens = new burgerdatabase({ path: "./datastore/tokens.json", noGzip: true });
+globalThis.dbUsers = new burgerdatabase({ path: "./datastore/users.json", noGzip: true });
 globalThis.dbPass = new burgerdatabase({ path: "./datastore/auth.json", noGzip: true });
 
 const app = express();
