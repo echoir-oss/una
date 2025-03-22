@@ -4,13 +4,13 @@ module.exports = {
 	method: "get",
 	path: "data/user",
 	async execute(req, res, next) {
-		if (typeof req.body?.userId !== 'string') {
+		if (typeof req.body?.uid !== 'string') {
 			res.status(403);
 			res.json({ success: false, code: -1 });
 			return;
 		}
 
-		const userData = await getUserData(userId);
+		const userData = await getUserData(req.body.uid);
 		
 		if (userData === null) {
 			res.status(403);
@@ -22,7 +22,7 @@ module.exports = {
 			success: true,
 			code: 0,
 			payload: {
-				username: userData
+				username: userData.username
 			}
 		});
 
