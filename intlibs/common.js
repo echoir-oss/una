@@ -154,6 +154,21 @@ async function createChannel(name, guildId) {
 	return cid.toString();
 }
 
+async function createGuild(name, ownerId) {
+	const gid = snowflakeGen.getUniqueID();
+
+	const guildData = {
+		version: "0",
+		name,
+		type: "guild",
+		gid,
+		memberIds: [ownerId]
+	}
+
+	await dbGuilds.set(`${gid}`, JSON.stringify(guildData));
+	return gid.toString();
+}
+
 module.exports = {
 	findIdByUsername,
 	findIdByEmail,
@@ -166,5 +181,6 @@ module.exports = {
 	verifyPassword,
 	createDMGroup,
 	createChannel,
+	createGuild,
 	createUser
 }
