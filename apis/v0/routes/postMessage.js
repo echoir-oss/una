@@ -1,4 +1,4 @@
-const { verifyToken, getUserData, isUserInGuild, isUserAllowedToParticipateInChannel } = require("../../../intlibs/common.js");
+const { verifyToken, getAuthData, isUserInGuild, isUserAllowedToParticipateInChannel } = require("../../../intlibs/common.js");
 
 module.exports = {
 	method: "post",
@@ -11,7 +11,7 @@ module.exports = {
 			return;
 		}
 
-		const userData = await getUserData(userId);
+		const userData = await getAuthData(userId);
 
 		if (typeof req.body.content !== 'string' || typeof req.body.cid !== 'string') {
 			res.status(400);

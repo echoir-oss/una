@@ -42,8 +42,16 @@ async function verifyToken(token) {
 	return id;
 }
 
+async function getAuthData(id) {
+	const authData = await dbPass.get(`user_${id}`);
+
+	if (authData === undefined) return null;
+
+	return authData;
+}
+
 async function getUserData(id) {
-	const userData = await dbPass.get(`user_${id}`);
+	const userData = await dbUsers.get(`user_${id}`);
 
 	if (userData === undefined) return null;
 
@@ -120,6 +128,7 @@ module.exports = {
 	findIdByEmail,
 	createToken,
 	verifyToken,
+	getAuthData,
 	getUserData,
 	isUserInGuild,
 	isUserAllowedToParticipateInChannel,
