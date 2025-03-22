@@ -123,6 +123,22 @@ async function createUser(email, username, password) {
 	return id;
 }
 
+async function createDMGroup(name, ownerId, memberIds) {
+	const cid = snowflakeGen.getUniqueID();
+
+	const channelData = {
+		version: "0",
+		name,
+		type: "dm",
+		ownerId,
+		memberIds
+	}
+
+	await dbChannels.set(`${cid}`, JSON.stringify(channelData));
+
+	return cid.toString();
+}
+
 module.exports = {
 	findIdByUsername,
 	findIdByEmail,
