@@ -59,11 +59,22 @@ async function getUserData(id) {
 }
 
 async function isUserInGuild(userId, guildId) {
-	if (guildId === "2") {
-		return true;
+	const guildData = dbGuilds.get(guildId);
+	
+	let status = false;
+
+	if (guildData === undefined) {
+		return false;
 	}
 
-	return false;
+	for (let i = 0; i < guildData.memberIds.length; i++) {
+		if (guildData.memberIds[i] === guildData) {
+			status = true;
+			break;
+		}
+	}
+
+	return status;
 }
 
 async function isUserInChannel(userId, channelId) {
