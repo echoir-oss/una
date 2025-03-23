@@ -43,29 +43,32 @@ async function verifyToken(token) {
 }
 
 async function getAuthData(id) {
-	const authData = await dbPass.get(`user_${id}`);
+	let authData = await dbPass.get(`user_${id}`);
 
 	if (authData === undefined) return null;
+	authData = JSON.parse(authData);
 
 	return authData;
 }
 
 async function getUserData(id) {
-	const userData = await dbUsers.get(`user_${id}`);
+	let userData = await dbUsers.get(`user_${id}`);
 
 	if (userData === undefined) return null;
+	userData = JSON.parse(userData);
 
 	return userData;
 }
 
 async function isUserInGuild(userId, guildId) {
-	const guildData = dbGuilds.get(guildId);
+	let guildData = dbGuilds.get(guildId);
 	
 	let status = false;
 
 	if (guildData === undefined) {
 		return false;
 	}
+	guildData = JSON.parse(guildData);
 
 	for (let i = 0; i < guildData.memberIds.length; i++) {
 		if (guildData.memberIds[i] === guildData) {
@@ -78,15 +81,17 @@ async function isUserInGuild(userId, guildId) {
 }
 
 async function isUserInChannel(userId, channelId) {
-	const channelData = dbChannels.get(channelId);
+	let channelData = dbChannels.get(channelId);
 	if (channelData === undefined) {
 		return false;
 	}
+	channelData = JSON.parse(channelData);
 
-	const guildData = dbGuilds.get(channelData.guildId);
+	let guildData = dbGuilds.get(channelData.guildId);
 	if (guildData === undefined) {
 		return false;
 	}
+	guildData = JSON.parse(guildData);
 
 	let status = false;
 
