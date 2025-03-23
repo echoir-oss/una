@@ -1,7 +1,7 @@
 const { getUserData } = require("../../../intlibs/common.js");
 
 module.exports = {
-	method: "get",
+	method: "post",
 	path: "data/user",
 	async execute(req, res, next) {
 		if (typeof req.body?.uid !== 'string') {
