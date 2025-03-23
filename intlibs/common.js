@@ -78,11 +78,26 @@ async function isUserInGuild(userId, guildId) {
 }
 
 async function isUserInChannel(userId, channelId) {
-	if (channelId === "5") {
-		return true;
+	const channelData = dbChannels.get(channelId);
+	if (channelData === undefined) {
+		return false;
 	}
 
-	return false;
+	const guildData = dbGuilds.get(channelData.guildId);
+	if (guildData === undefined) {
+		return false;
+	}
+
+	let status = false;
+
+	for (let i = 0; i < guildData.memberIds.length; i++) {
+		if (guildData.memberIds[i] === guildData) {
+			status = true;
+			break;
+		}
+	}
+
+	return status;
 }
 
 async function isUserAllowedToParticipateInChannel(userId, channelId) {
