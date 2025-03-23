@@ -68,7 +68,7 @@ async function isUserInGuild(userId, guildId) {
 	}
 
 	for (let i = 0; i < guildData.memberIds.length; i++) {
-		if (guildData.memberIds[i] === guildData) {
+		if (guildData.memberIds[i] === userId) {
 			status = true;
 			break;
 		}
