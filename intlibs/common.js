@@ -151,6 +151,11 @@ async function createDMGroup(name, ownerId, memberIds) {
 }
 
 async function createChannel(name, guildId) {
+	const guildData = dbGuilds.get(guildId);
+	if (guildData === undefined) {
+		return null;
+	}
+
 	const cid = snowflakeGen.getUniqueID();
 
 	const channelData = {
@@ -160,6 +165,14 @@ async function createChannel(name, guildId) {
 		guildId
 	}
 
+	guildData.channelIds.push(cid);
+
+	globalThis.mainLoop.emit("channelCreate", {
+		cid: cid,
+		gid: guildId
+	});
+
+	await dbGuilds.set(`${guildId}`, JSON.stringify(guildData));
 	await dbChannels.set(`${cid}`, JSON.stringify(channelData));
 
 	return cid.toString();
