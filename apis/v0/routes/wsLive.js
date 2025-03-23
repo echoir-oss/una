@@ -81,7 +81,7 @@ module.exports = {
 		ws.send(JSON.stringify({
 			type: "earlyInfo",
 			payload: {
-				gidList: ["1"],
+				gidList: gidList,
 				uid: id
 			}
 		}));
