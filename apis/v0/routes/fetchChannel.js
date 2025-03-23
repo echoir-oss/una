@@ -22,6 +22,7 @@ module.exports = {
 		if (!(await isUserAllowedToParticipateInChannel(userId, req.body.cid))) {
 			res.status(403);
 			res.json({ success: false, code: -2 });
+			return;
 		}
 
 		if (!(await isUserInGuild(userId, req.body.cid))) {
