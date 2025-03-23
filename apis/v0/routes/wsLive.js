@@ -1,4 +1,4 @@
-const { verifyToken } = require("../../../intlibs/common.js");
+const { verifyToken, isUserAllowedToParticipateInChannel, isUserInGuild } = require("../../../intlibs/common.js");
 
 module.exports = {
 	method: "ws",
@@ -26,7 +26,42 @@ module.exports = {
 			return;
 		}
 
-		ws.listenerThingie = mainLoop.on('post', mainLoopPost);
+		function mainLoopGuildCreate(payload) {
+			if (!isUserInGuild(id, payload.gid)) {
+				console.log(payload.gid);
+				return;
+			}
+
+			ws.send(JSON.stringify({
+				type: "guildCreate",
+				payload: payload
+			}));
+
+			return;
+		}
+
+		function mainLoopChannelCreate(payload) {
+			console.log(payload);
+			if (!isUserInGuild(id, payload.gid)) {
+				console.log(payload.gid);
+				return;
+			}
+			if (!isUserAllowedToParticipateInChannel(id, payload.cid)) {
+				console.log(payload.cid);
+				return;
+			}
+
+			ws.send(JSON.stringify({
+				type: "channelCreate",
+				payload: payload
+			}));
+
+			return;
+		}
+
+		ws.listenerThingieA = mainLoop.on('post', mainLoopPost);
+		ws.listenerThingieB = mainLoop.on("channelCreate", mainLoopChannelCreate);
+		ws.listenerThingieC = mainLoop.on("guildCreate", mainLoopGuildCreate);
 
 		ws.send(JSON.stringify({
 			type: "authentication",
@@ -35,6 +70,14 @@ module.exports = {
 			}
 		}));
 
+		let gidList = [];
+
+		for (const [key, value] of Object.entries(globalThis.dbGuilds.all())) {
+			if (isUserInGuild(id.toString(), key)) {
+				gidList.push(key);
+			}
+		}
+
 		ws.send(JSON.stringify({
 			type: "earlyInfo",
 			payload: {
@@ -42,7 +85,6 @@ module.exports = {
 				uid: id
 			}
 		}));
-
 		ws.send(JSON.stringify({
 			type: "ready",
 			payload: {}
@@ -50,6 +92,8 @@ module.exports = {
 
 		ws.on('close', async () => {
 			mainLoop.removeListener('post', mainLoopPost);
+			mainLoop.removeListener("channelCreate", mainLoopChannelCreate);
+			mainLoop.removeListener("guildCreate", mainLoopGuildCreate);
 		});
 	}
 }
