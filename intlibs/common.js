@@ -165,7 +165,7 @@ async function createDMGroup(name, ownerId, memberIds) {
 		memberIds
 	}
 
-	await dbChannels.set(`${cid}`, JSON.stringify(channelData));
+	await dbChannels.set(`${cid}`, channelData);
 
 	return cid.toString();
 }
@@ -192,8 +192,8 @@ async function createChannel(name, guildId) {
 		gid: guildId
 	});
 
-	await dbGuilds.set(`${guildId}`, JSON.stringify(guildData));
-	await dbChannels.set(`${cid}`, JSON.stringify(channelData));
+	await dbGuilds.set(`${guildId}`, guildData);
+	await dbChannels.set(`${cid}`, channelData);
 
 	return cid.toString();
 }
@@ -209,7 +209,7 @@ async function createGuild(name, ownerId) {
 		channelIds: []
 	}
 
-	await dbGuilds.set(`${gid}`, JSON.stringify(guildData));
+	await dbGuilds.set(`${gid}`, guildData);
 	return gid.toString();
 }
 
