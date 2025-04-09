@@ -1,8 +1,8 @@
 const { verifyToken, isUserInGuild, isUserAllowedToParticipateInChannel } = require("../../../intlibs/common.js");
 
 module.exports = {
-	method: "post",
-	path: "data/channel",
+	method: "get",
+	path: "data/channel/:cid",
 	async execute(req, res, next) {
 		const userId = await verifyToken(req.headers['authorization']);
 		if (userId === null) {
@@ -11,21 +11,15 @@ module.exports = {
 			return;
 		}
 
-		if (typeof req.body?.cid !== 'string') {
-			res.status(403);
-			res.json({ success: false, code: -1 });
-			return;
-		}
+		const channelData = await dbChannels.get(req.params.cid);
 
-		const channelData = await dbChannels.get(req.body.cid);
-
-		if (!(await isUserAllowedToParticipateInChannel(userId, req.body.cid))) {
+		if (!(await isUserAllowedToParticipateInChannel(userId, req.params.cid))) {
 			res.status(403);
 			res.json({ success: false, code: -2 });
 			return;
 		}
 
-		if (!(await isUserInGuild(userId, req.body.cid))) {
+		if (!(await isUserInGuild(userId, req.params.cid))) {
 			res.status(403);
 			res.json({ success: false, code: -3 });
 			return;
