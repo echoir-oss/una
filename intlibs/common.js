@@ -131,8 +131,8 @@ async function verifyPassword(id, password) {
 }
 
 async function createUser(email, username, password) {
-	if (findIdByUsername(username) !== null) return null; 
-	if (findIdByEmail(email) !== null) return null;
+	if ((await findIdByUsername(username)) !== null) return null; 
+	if ((await findIdByEmail(email)) !== null) return null;
 
 	const passhash = await bcrypt.hash(password, 10);
 	const id = snowflakeGen.getUniqueID().toString();
