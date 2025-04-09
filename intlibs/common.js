@@ -135,7 +135,7 @@ async function createUser(email, username, password) {
 	if (findIdByEmail(email) !== null) return null;
 
 	const passhash = await bcrypt.hash(password, 10);
-	const id = snowflakeGen.getUniqueID();
+	const id = snowflakeGen.getUniqueID().toString();
 
 	const userData = {
 		version: "0",
