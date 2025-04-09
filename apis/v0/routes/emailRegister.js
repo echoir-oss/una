@@ -41,7 +41,7 @@ module.exports = {
 			success: true,
 			code: 0,
 			payload: {
-				id: id.toString()
+				id: id
 			}
 		});
 	
