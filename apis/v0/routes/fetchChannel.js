@@ -40,7 +40,7 @@ module.exports = {
 		const guildId = await common.findGuildIdOfChannel(channelId);
 		if (guildId === null) {
 			res.status(403);
-			res.json({ error: -1, message: "invalid channelId provided"});
+			res.json({ error: -2, message: "invalid channelId provided" });
 
 			return;
 		}
@@ -53,7 +53,7 @@ module.exports = {
 
 		if (!isUserInGuild) {
 			res.status(403);
-			res.json({ error: -2, message: "unauthorised" });
+			res.json({ error: -3, message: "unauthorised" });
 
 			return;
 		}
